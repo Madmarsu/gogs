@@ -160,7 +160,7 @@ func LoginPost(c *context.Context, f form.SignIn) {
 		return
 	}
 
-	u, err := models.UserLogin(f.UserName, f.Password, f.LoginSource)
+	u, err := models.LoggedUserLogin(f.UserName, f.Password, f.LoginSource, c.Context)
 	if err != nil {
 		switch err.(type) {
 		case errors.UserNotExist:

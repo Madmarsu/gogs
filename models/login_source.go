@@ -21,6 +21,7 @@ import (
 	"github.com/go-xorm/xorm"
 	"github.com/json-iterator/go"
 	log "gopkg.in/clog.v1"
+	"gopkg.in/macaron.v1"
 	"gopkg.in/ini.v1"
 
 	"github.com/gogs/gogs/models/errors"
@@ -764,4 +765,15 @@ func UserLogin(username, password string, loginSourceID int64) (*User, error) {
 	}
 
 	return remoteUserLogin(nil, username, password, source, true)
+}
+
+// LoggedUserLogin validates user name and password via given login source ID.
+// If the loginSourceID is negative, it will abort login process if user is not found.
+func LoggedUserLogin(username, password string, loginSourceID int64,ctx *macaron.Context) (*User, error) {
+	source, err := UserLogin(username, password, loginSourceID)
+	if err != nil {
+		log.Info("Failed authentication attempt from %s", ctx.RemoteAddr())
+	}
+
+	return source, err
 }
